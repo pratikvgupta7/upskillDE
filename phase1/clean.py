@@ -32,7 +32,7 @@ duckdb.sql(f"""
         WHERE fare_amount > 0
           AND trip_distance >= 0
           AND tpep_pickup_datetime <= tpep_dropoff_datetime
-          AND payment_type BETWEEN 1 AND 4
+          AND payment_type BETWEEN 0 AND 6
           AND NOT (trip_distance = 0 AND fare_amount <= 0)
           AND month(tpep_pickup_datetime) IN (1,2)
     )
@@ -50,4 +50,9 @@ duckdb.sql(f"""
            FROM read_parquet('{CLEAN_DIR}/**/*.parquet')
            GROUP BY pickup_month
            ORDER BY pickup_month
+           """).show()
+
+duckdb.sql(f"""
+    SELECT count(*) as total_rows,
+           FROM read_parquet('{CLEAN_DIR}/**/*.parquet')
            """).show()

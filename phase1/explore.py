@@ -141,3 +141,23 @@ duckdb.sql(f"""
       AND payment_type BETWEEN 1 AND 4
       AND NOT (trip_distance = 0 AND fare_amount <= 0)
 """).show()
+
+
+duckdb.sql(f"""
+    SELECT
+        count(*)                                                                AS total_raw,
+        count(*) FILTER (WHERE fare_amount <= 0)                               AS bad_fare,
+        count(*) FILTER (WHERE payment_type NOT BETWEEN 1 AND 4)               AS bad_payment,
+        count(*) FILTER (WHERE trip_distance = 0 AND fare_amount <= 0)         AS zero_dist_zero_fare,
+        count(*) FILTER (WHERE tpep_pickup_datetime > tpep_dropoff_datetime)   AS bad_timestamps,
+        count(*) FILTER (WHERE month(tpep_pickup_datetime) NOT IN (1,2))       AS wrong_month,
+        -- how many fail AT LEAST ONE condition
+        count(*) FILTER (WHERE
+            fare_amount <= 0
+            OR payment_type NOT BETWEEN 1 AND 4
+            OR (trip_distance = 0 AND fare_amount <= 0)
+            OR tpep_pickup_datetime > tpep_dropoff_datetime
+            OR month(tpep_pickup_datetime) NOT IN (1,2)
+        )                                                                       AS total_dropped
+    FROM read_parquet('{RAW}')
+""").show()
