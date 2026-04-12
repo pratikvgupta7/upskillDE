@@ -8,6 +8,8 @@ sources:
         description: "Raw taxi trip data"
         meta:
             external_location: "read_parquet('D:/GitHub/upskillDE/data/clean/**/*.parquet')"
+            dagster:
+              asset_key: ["clean_taxi_data"]
         columns:
           - name: pickup_datetime
             description: "Trip start timestamp"
