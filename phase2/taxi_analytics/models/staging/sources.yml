@@ -1,0 +1,23 @@
+version: 2
+
+sources:
+  - name: raw_taxi
+    description: "Raw taxi data from the data lake"
+    tables:
+      - name: trips
+        description: "Raw taxi trip data"
+        meta:
+            external_location: "read_parquet('D:/GitHub/upskillDE/data/clean/**/*.parquet')"
+        columns:
+          - name: pickup_datetime
+            description: "Trip start timestamp"
+          - name: fare_amount
+            description: "Metered fare amount in USD"
+          - name: payment_type
+            description: "0=Flex Fare 1=Credit 2=Cash 3=No Charge 4=Dispute 5=Unknown 6=Voided"
+          - name: trip_distance
+            description: "Trip distance in miles"
+          - name: pickup_location_id
+            description: "TLC zone ID for pickup"
+          - name: dropoff_location_id
+            description: "TLC zone ID for dropoff"

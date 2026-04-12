@@ -1,0 +1,38 @@
+version: 2
+
+models:
+  - name: stg_taxi_trips
+    description: "Staging model for raw taxi trip data"
+    columns:
+      - name: pickup_datetime
+        description: "Trip start timestamp"
+        tests:
+          - not_null
+      - name: dropoff_datetime
+        description: "Trip end timestamp"
+        tests:
+          - not_null
+      - name: fare_amount
+        description: "Metered fare in USD"
+        tests:
+          - not_null
+
+      - name: trip_distance
+        description: "Trip distance in miles"
+        tests:
+          - not_null
+
+      - name: payment_method
+        description: "Human readable payment type"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['flex_fare', 'credit_card', 'cash', 'no_charge', 'dispute', 'unknown', 'voided']
+
+      - name: pickup_month
+        description: "Month of pickup, should only be 1 or 2"
+        tests:
+          - accepted_values:
+              arguments:
+                values: [1, 2]
