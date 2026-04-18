@@ -121,3 +121,34 @@ The custom Flink image (`Dockerfile.flink`) extends `flink:1.18-scala_2.12-java1
 - The consumer's in-memory join (`trip_started` dict) will grow unboundedly under high throughput or if producers restart without the consumer resetting its offset. In production this would be replaced by Flink stateful operators with a TTL.
 - Orphans appear when the consumer starts mid-stream and `trip_ended` arrives before the corresponding `trip_started` has been seen.
 - The Flink Iceberg integration was explored but writing a Flink SQL job that sinks directly into Iceberg on MinIO requires resolving JAR version conflicts between Hadoop, AWS SDK, and Iceberg runtimes — see the commit history for the attempted setup.
+
+## Flink Interval Join — How It Works
+
+The interval join matches trip_started and trip_ended events for the same trip
+within a 2 hour time window.
+
+### SQL Definition
+```sql
+SELECT s.trip_id, s.pickup_datetime, e.dropoff_datetime, e.fare_amount
+FROM taxi_events s
+JOIN taxi_events e
+    ON s.trip_id = e.trip_id
+   AND s.event_type = 'trip_started'
+   AND e.event_type = 'trip_ended'
+   AND e.proc_time BETWEEN s.proc_time
+       AND s.proc_time + INTERVAL '2' HOUR
+```
+
+### Why interval join instead of regular join
+A regular stream-stream join stores all unmatched events in state forever.
+With millions of trips per day this causes unbounded memory growth and
+eventually crashes the job.
+
+The interval join adds a time boundary — Flink automatically discards
+unmatched trip_started events after 2 hours. State stays bounded.
+
+### What happens to unmatched events
+If a trip_ended never arrives within 2 hours of trip_started:
+- Flink discards the trip_started from state
+- The trip is effectively lost — treated as an orphan
+- In production this would be caught by a side output handler
