@@ -36,3 +36,5 @@ models:
       +materialized: view
     marts:
       +materialized: table
+
+# CI test trigger
