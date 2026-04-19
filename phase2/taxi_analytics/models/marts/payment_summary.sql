@@ -1,3 +1,7 @@
+{% call statement('disable_optimizer') %}
+    PRAGMA disable_optimizer
+{% endcall %}
+
 WITH trips AS (
     SELECT * FROM {{ref('stg_taxi_trips')}}
 )

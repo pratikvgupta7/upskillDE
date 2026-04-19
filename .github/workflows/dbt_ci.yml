@@ -71,7 +71,7 @@ jobs:
       - name: Run dbt build
         working-directory: phase2/taxi_analytics
         run: |
-          dbt build
+          dbt run
 
       - name: Run dbt tests
         working-directory: phase2/taxi_analytics
