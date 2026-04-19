@@ -18,7 +18,7 @@ SELECT
 
 FROM trips
 GROUP BY
-    DATE_TRUNC('day', pickup_datetime),
+    DATE_TRUNC('day', pickup_datetime::TIMESTAMP),
     pickup_month,
     pickup_day
 ORDER BY trip_date
