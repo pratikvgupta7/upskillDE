@@ -1,0 +1,8 @@
+# Terraform state files — contain sensitive data
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+
+# Variable files that might contain secrets
+*.tfvars

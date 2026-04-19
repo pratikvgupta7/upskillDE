@@ -1,0 +1,50 @@
+name: dbt CI
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'phase2/taxi_analytics/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'phase2/taxi_analytics/**'
+
+jobs:
+  dbt-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install dbt-duckdb
+
+      - name: Create dbt profiles
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml << EOF
+          taxi_analytics:
+            target: dev
+            outputs:
+              dev:
+                type: duckdb
+                path: /tmp/dev.duckdb
+          EOF
+
+      - name: Run dbt build
+        working-directory: phase2/taxi_analytics
+        run: |
+          dbt build --select staging
+
+      - name: Run dbt tests
+        working-directory: phase2/taxi_analytics
+        run: |
+          dbt test
