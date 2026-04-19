@@ -7,7 +7,7 @@ sources:
       - name: trips
         description: "Raw taxi trip data"
         meta:
-            external_location: "read_parquet('D:/GitHub/upskillDE/data/clean/**/*.parquet')"
+            external_location: "read_parquet('../../../data/clean/**/*.parquet')"
             dagster:
               asset_key: ["clean_taxi_data"]
         columns:
