@@ -27,7 +27,41 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install dbt-duckdb
+          pip install dbt-duckdb duckdb
+
+      - name: Create dummy source data
+        run: |
+          python -c "
+          import duckdb, os
+          os.makedirs('data/clean/pickup_month=1', exist_ok=True)
+          duckdb.sql('''
+              COPY (
+                  SELECT
+                      '2024-01-01 08:00:00'::VARCHAR AS pickup_datetime,
+                      '2024-01-01 08:30:00'::VARCHAR AS dropoff_datetime,
+                      1::INT AS passenger_count,
+                      2.5::DOUBLE AS trip_distance,
+                      132::INT AS pickup_location_id,
+                      186::INT AS dropoff_location_id,
+                      1::INT AS payment_type,
+                      15.0::DOUBLE AS fare_amount,
+                      3.0::DOUBLE AS tip_amount,
+                      0.0::DOUBLE AS tolls_amount,
+                      18.0::DOUBLE AS total_amount,
+                      20.0::DOUBLE AS tip_pct,
+                      30.0::DOUBLE AS duration_minutes,
+                      8::INT AS pickup_hour,
+                      'Monday'::VARCHAR AS pickup_day,
+                      1::INT AS pickup_month
+              ) TO 'data/clean/pickup_month=1/test.parquet' (FORMAT PARQUET)
+          ''')
+          print('Created dummy data at data/clean/pickup_month=1/test.parquet')
+          "
+
+      - name: Debug path
+        run: |
+          echo "Repo root: $(pwd)"
+          find . -name "*.parquet"
 
       - name: Create dbt profiles
         run: |
@@ -44,9 +78,9 @@ jobs:
       - name: Run dbt build
         working-directory: phase2/taxi_analytics
         run: |
-          dbt build --empty
+          dbt build
 
       - name: Run dbt tests
         working-directory: phase2/taxi_analytics
         run: |
-          dbt test
+          dbt test --select test_type:singular
