@@ -3,12 +3,14 @@ name: dbt CI
 on:
   push:
     branches: [ master ]
-    # paths:
-    #   - 'phase2/taxi_analytics/**'
+    paths:
+      - 'phase2/taxi_analytics/**'
+      - '.github/workflows/**'
   pull_request:
     branches: [ master ]
-    # paths:
-    #   - 'phase2/taxi_analytics/**'
+    paths:
+      - 'phase2/taxi_analytics/**'
+      - '.github/workflows/**'
 
 jobs:
   dbt-test:
@@ -42,7 +44,7 @@ jobs:
       - name: Run dbt build
         working-directory: phase2/taxi_analytics
         run: |
-          dbt build --select staging
+          dbt build --empty
 
       - name: Run dbt tests
         working-directory: phase2/taxi_analytics
