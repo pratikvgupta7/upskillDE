@@ -3,7 +3,7 @@ WITH trips AS (
 )
 
 SELECT
-    DATE_TRUNC('day', pickup_datetime)      AS trip_date,
+    DATE_TRUNC('day', pickup_datetime::TIMESTAMP)      AS trip_date,
     pickup_month,
     pickup_day,
     count(*)                                AS total_trips,
