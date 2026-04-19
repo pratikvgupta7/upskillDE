@@ -2,11 +2,11 @@ name: dbt CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
     paths:
       - 'phase2/taxi_analytics/**'
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
     paths:
       - 'phase2/taxi_analytics/**'
 
