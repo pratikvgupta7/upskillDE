@@ -3,12 +3,12 @@ name: dbt CI
 on:
   push:
     branches: [ master ]
-    paths:
-      - 'phase2/taxi_analytics/**'
+    # paths:
+    #   - 'phase2/taxi_analytics/**'
   pull_request:
     branches: [ master ]
-    paths:
-      - 'phase2/taxi_analytics/**'
+    # paths:
+    #   - 'phase2/taxi_analytics/**'
 
 jobs:
   dbt-test:
