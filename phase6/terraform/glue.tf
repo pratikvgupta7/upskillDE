@@ -59,6 +59,7 @@ resource "aws_iam_role_policy_attachment" "glue_service" {
 # Athena workgroup — where queries run and results are stored
 resource "aws_athena_workgroup" "taxi" {
   name = "${var.project_name}-workgroup"
+  force_destroy = true
 
   configuration {
     result_configuration {

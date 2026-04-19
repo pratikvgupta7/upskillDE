@@ -1,6 +1,7 @@
 # main data lake bucket
 resource "aws_s3_bucket" "data_lake" {
   bucket = var.bucket_name
+  force_destroy = true
 }
 
 # block all public access — data lake should never be public
